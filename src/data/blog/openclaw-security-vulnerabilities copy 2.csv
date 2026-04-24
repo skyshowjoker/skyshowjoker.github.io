@@ -1,0 +1,127 @@
+版本,严重程度,问题标题,漏洞描述,解决方案,Git Commit/PR
+2026.3.24,低危,基础安全架构建立,早期稳定版本建立基础安全架构和安全模型框架,建立基础安全架构和受信任操作员安全模型框架,N/A
+2026.3.28,中危,基础SSRF防护框架,早期版本缺乏系统性的SSRF防护机制,"引入DNS固定的调度器;实施私有IP地址检查;建立URL验证框架",N/A
+2026.3.28,中危,媒体服务器路径遍历漏洞,媒体服务器未正确验证文件路径可能允许访问预期目录之外的文件,"实施严格的路径验证;阻止路径遍历攻击",b94b220156
+2026.3.28,中危,iMessage SCP远程路径shell元字符注入,iMessage的SCP远程路径未正确清理可能允许shell元字符注入,"清理SCP远程路径;防止shell元字符注入",a54bf71b4c
+2026.3.28,中危,未引用heredoc主体中的命令替换,未引用的heredoc主体可能执行命令替换,"阻止未引用heredoc主体中的命令替换;在heredoc中使用引号包裹防止命令替换","92cada2aca a54bba6ee0"
+2026.3.28,中危,安全审计扩展,Web搜索凭证审计扩展以识别Gemini、Grok/xAI、Kimi、Moonshot和OpenRouter凭证,通过边界安全的捆绑Web搜索注册表填充程序扩展Web搜索密钥审计,#56540
+2026.3.31,高危,Skills/Plugins安装危险代码默认行为变更,之前版本中危险代码检测和安装时扫描失败默认允许安装攻击者可通过恶意插件安装后门代码,"内置危险代码critical发现和安装时扫描失败现在默认失败关闭;插件安装和网关支持的技能依赖安装现在可能需要显式的危险覆盖才能继续",#57777 #57691
+2026.3.31,高危,Gateway/auth trusted-proxy认证绕过,"trusted-proxy模式接受混合共享令牌配置本地直连回退隐式认证同主机调用者","trusted-proxy现在拒绝混合共享令牌配置;本地直连回退需要配置的令牌而不是隐式认证同主机调用者",Thanks @zhangning-agent @jacobtomlinson
+2026.3.31,高危,Gateway/node commands节点命令未授权暴露,设备配对足以暴露声明的节点命令即使未经节点配对批准,"节点命令现在保持禁用状态直到节点配对被批准;设备配对本身不再足以暴露声明的节点命令",#57777
+2026.3.31,高危,Gateway/node events节点事件信任边界,节点发起的运行依赖更广泛的主机/会话工具访问可能超越预期权限边界,"节点发起的运行现在保持在减少的受信任表面上;依赖更广泛主机/会话工具访问的通知驱动或节点触发流可能需要调整",#57691
+2026.3.31,中危,Nostr inbound DMs签名验证缺失,入站DM事件在配对或发送者授权副作用之前未验证签名伪造的DM事件可创建配对请求或触发回复尝试,"在配对或发送者授权副作用之前验证入站事件签名;伪造的DM事件不再创建配对请求或触发回复尝试",Thanks @smaeljaish771
+2026.3.31,中危,ACP/security危险工具自动审批,ACP的危险工具名称覆盖允许非执行能力的工具自动审批可能绕过安全检查,"用语义审批类替换ACP的危险工具名称覆盖;只有窄的只读读取/搜索可以自动审批;间接执行能力和控制平面工具始终需要显式提示审批",N/A
+2026.3.31,中危,Gateway/device tokens活跃会话未断开,令牌轮换后活跃的设备会话继续连接旧凭证仍然有效,"令牌轮换后断开活跃的设备会话;新轮换的凭证立即撤销现有的实时连接",Thanks @zsxsoft
+2026.3.31,中危,Gateway/auth浏览器Origin头验证,受信任代理HTTP操作员请求上未拒绝不匹配的浏览器Origin头,在受信任代理HTTP操作员请求上拒绝不匹配的浏览器Origin头,Thanks @AntAISecurityLab
+2026.3.31,中危,Gateway/auth共享认证速率限制绕过,当调用者同时发送设备令牌候选时共享认证速率限制被抑制伪造的设备令牌字段可抑制共享密钥暴力跟踪,"在WebSocket握手尝试期间保持共享认证速率限制活动;伪造的设备令牌字段不再抑制共享密钥暴力跟踪",Thanks @kexinoh
+2026.3.31,中危,Exec/env代理和TLS环境变量覆盖,请求作用域的命令可通过环境变量静默重定向出站流量或信任攻击者提供的证书设置,"在主机执行中阻止代理、TLS和Docker端点环境变量覆盖;请求作用域的命令不能静默重路由出站流量或信任攻击者提供的证书设置",Thanks @AntAISecurityLab
+2026.3.31,中危,Host exec/env编译器和包路径覆盖,请求作用域的环境变量覆盖可重定向Docker端点、信任根、编译器包含路径、包解析或Python环境根,"阻止额外的请求作用域环境变量覆盖;防止重定向Docker端点、信任根、编译器包含路径、包解析或Python环境根",Thanks @tdjackey
+2026.3.31,中危,Heartbeat/auth非所有者工具访问继承,执行事件心跳运行从会话传递目标继承所有者专用工具访问即使目标会话属于所有者,"防止执行事件心跳运行从会话传递目标继承所有者专用工具访问;节点执行输出保持在非所有者工具表面上",Thanks @AntAISecurityLab
+2026.3.31,中危,Feishu/groups引用回复和主题引导上下文,引用回复和主题引导上下文未与组发送者允许列表对齐非允许列表的线程消息可种子代理上下文,"将引用回复和主题引导上下文与组发送者允许列表对齐;只有允许列表的线程消息可种子代理上下文",Thanks @AntAISecurityLab
+2026.3.31,中危,Hooks/session routing钩子会话路由,钩子触发的agent:会话键未重新绑定到实际目标代理专用钩子代理丢失会话作用域的工具和插件身份,"在隔离派发之前将钩子触发的agent:会话键重新绑定到实际目标代理;专用钩子代理保持自己的会话作用域工具和插件身份",Thanks @kexinoh
+2026.3.31,中危,Discord/voice语音入口访问控制,已加入的语音频道在转录前未执行相同的公会频道和成员允许列表检查配置的Discord访问策略之外的用户可提交语音,"在转录前对语音入口执行相同的公会频道和成员允许列表检查;已加入的语音频道不再接受来自配置Discord访问策略之外用户的语音",Thanks @cyjhhh
+2026.3.31,中危,Gateway/tools HTTP工具调用授权,HTTP工具调用授权松散所有者专用工具在HTTP调用路径上可用,"加强HTTP工具调用授权;所有者专用工具在HTTP调用路径上保持禁用",#57773
+2026.3.31,中危,Gateway/plugins插件HTTP处理程序权限,插件HTTP处理程序在缺少或不受信任的HTTP scope头部时获得管理员级运行时作用域,"将网关认证插件运行时路由保持在只写回退作用域上;插件拥有的webhook处理程序默认不继承可写运行时访问",Thanks @davidluzsilva
+2026.4.1,高危,Device pairing配对授权绕过,低权限网关调用者可铸造或撤销配对引导材料内部/pair设置代码、QR和清理命令缺乏权限检查,"内部/pair设置代码、QR和清理命令需要operator.pairing或operator.admin;低权限网关调用者不再能铸造或撤销配对引导材料",#60491
+2026.4.1,中危,Chat/error replies敏感信息泄露,原始提供者/运行时失败泄露到外部聊天频道可能暴露内部配置或路径信息,"停止将原始提供者/运行时失败泄露到外部聊天频道;返回友好的重试消息;为Bedrock toolResult/toolUse会话不匹配添加特定的/new提示",#58831
+2026.4.1,中危,Agents/failover提供者错误分类,提供者特定的400/422载荷被强制转换为通用格式失败重试、计费或压缩逻辑无法检查它们,"统一结构化和原始提供者错误分类;提供者特定的400/422载荷在重试、计费或压缩逻辑检查之前不再被强制转换为通用格式失败",#58856
+2026.4.1,中危,Auth profiles/store SecretRef处理,升级后错误放置的SecretRef对象在存储加载期间未从明文key和token字段中强制移除导致代理崩溃,"在存储加载期间从明文key和token字段强制移除错误放置的SecretRef对象;没有ACP运行时的代理在升级后不再因.trim()崩溃",#58923
+2026.4.1,中危,Auth/OpenAI Codex OAuth凭证持久化,插件刷新的OAuth凭证在返回前未持久化到auth-profiles.json轮换的Codex刷新令牌在重启后丢失并陷入refresh_token_reused循环,"在返回前将插件刷新的OAuth凭证持久化到auth-profiles.json;轮换的Codex刷新令牌在重启后存活",#53082
+2026.4.2,高危,Sandbox/security凭证路径绑定绕过,即使沙箱主路径通过规范别名解析代理容器仍可通过备用主目录路径挂载用户秘密存储,"即使沙箱主路径通过规范别名解析也阻止凭证路径绑定;代理容器不能通过备用主目录路径挂载用户秘密存储",#59157
+2026.4.2,高危,Exec/env环境变量覆盖扩展,额外的请求作用域环境变量覆盖可重定向包根、语言运行时、编译器包含路径和凭证/配置位置,"阻止额外的主机环境覆盖枢轴;防止重定向包根、语言运行时、编译器包含路径和凭证/配置位置",#59233
+2026.4.2,高危,Dotenv/workspace overrides受信任解释器重定向,工作区.env文件可覆盖OPENCLAW_PINNED_PYTHON和OPENCLAW_PINNED_WRITE_PYTHON可信助手解释器可被仓库本地环境注入重定向,"阻止工作区.env文件覆盖OPENCLAW_PINNED_PYTHON和OPENCLAW_PINNED_WRITE_PYTHON;可信助手解释器不能被仓库本地环境注入重定向",#58473
+2026.4.2,中危,Channels/setup非信任工作区通道插件,非信任的工作区通道插件在设置解析期间可覆盖内置通道设置/登录流,"在设置解析期间忽略非信任的工作区通道插件;阴影工作区插件不能覆盖内置通道设置/登录流除非在配置中显式信任",#59158
+2026.4.2,中危,Webhooks/secret comparison时序攻击,"BlueBubbles、飞书、Mattermost、Telegram、Twilio和Zalo webhook处理程序中的时序安全秘密比较不一致且BlueBubbles接受空认证令牌","用共享的safeEqualSecret助手替换临时时序安全秘密比较;在BlueBubbles中拒绝空认证令牌",#58432
+2026.4.2,中危,OpenShell/mirror远程工作区约束,remoteWorkspaceDir和remoteAgentWorkspaceDir未约束到管理的/sandbox和/agent根镜像同步在配置同步期间可覆盖或移除用户添加的shell根,"将remoteWorkspaceDir和remoteAgentWorkspaceDir约束到管理的/sandbox和/agent根;镜像同步不再在配置同步期间覆盖或移除用户添加的shell根",#58515
+2026.4.2,中危,Browser/CDP跨主机枢轴,初始和发现的CDP websocket端点在连接前未验证严格SSRF策略未能阻止跨主机枢轴和直接websocket目标,"在连接前验证初始和发现的CDP websocket端点;严格SSRF策略阻止跨主机枢轴和直接websocket目标",#60469
+2026.4.2,中危,Browser/profiles远程浏览器SSRF,远程浏览器配置文件cdpUrl值在保存配置前未验证是否违反严格SSRF策略,"在保存配置前拒绝违反严格SSRF策略的远程浏览器配置文件cdpUrl值;为阻塞端点提供更清晰的验证错误",#60477
+2026.4.2,中危,Gateway/session kill未授权探测,HTTP操作员作用域未在会话终止请求上强制执行未认证调用者可探测会话存在,"在会话终止请求上强制执行HTTP操作员作用域;在会话查找之前进行授权检查;未认证调用者不能探测会话存在",#59128
+2026.4.2,中危,QQBot/structured payloads本地文件路径,本地文件路径未限制到QQ Bot拥有的媒体存储可在该根之外遍历,"将本地文件路径限制到QQ Bot拥有的媒体存储;阻止在该根之外遍历;减少日志中的路径泄露",#58453
+2026.4.5,高危,Browser/SSRF重定向绕过,浏览器工具在处理交互驱动的导航时未重新执行SSRF安全检查点击、提交、键盘和当前页面快照流在禁止目标上未失败关闭,"在交互驱动导航后和快照读取前重新运行SSRF安全检查;点击、提交、键盘和当前页面快照流在禁止目标上失败关闭",#62023
+2026.4.5,高危,Device pairing令牌作用域升级,设备配对令牌可轮换到配对期间从未批准的角色重连角色检查未绑定到配对设备的批准角色集,"拒绝将设备令牌轮换到配对期间从未批准的角色;将重连角色检查绑定到配对设备的批准角色集",#60462
+2026.4.5,高危,Gateway/plugin routes插件HTTP处理程序权限提升,插件HTTP处理程序在缺少或不受信任的HTTP scope头部时获得管理员级运行时作用域插件拥有的webhook处理程序默认继承可写运行时访问,"将网关认证插件运行时路由保持在只写回退作用域上;插件拥有的webhook处理程序默认不继承可写运行时访问",#59815
+2026.4.5,高危,Device pairing引导验证作用域升级,非操作员设备作用域检查未绑定到请求的角色前缀引导验证可通过node认证兑换operator.*作用域,"将非操作员设备作用域检查绑定到请求的角色前缀;引导验证不能通过node认证兑换operator.*作用域",#57258
+2026.4.5,高危,Mobile pairing安全端点处理,"Tailscale和公共远程设置接受明文端点私有LAN配对处理不一致合并角色批准铸造不正确的令牌作用域","Tailscale和公共远程设置拒绝明文端点;私有LAN配对仍然有效;合并角色批准正确铸造节点和操作员设备令牌","#60128 #60208 #60221"
+2026.4.5,高危,Android/canvas security A2UI URL验证,Android canvas桥接操作未严格验证URL接受查询不匹配和后代路径,"在转发canvas桥接操作前要求精确规范化的A2UI URL匹配;拒绝查询不匹配和后代路径","#60128 #60208 #60221"
+2026.4.5,高危,Plugins/marketplace符号链接逃逸,远程市场安装可通过符号链接逃逸绕过预期的安装路径约束,"阻止远程市场符号链接逃逸;保持普通本地市场安装路径",#60556
+2026.4.5,高危,Lobster任意执行漏洞,通过lobsterPath/cwd可执行任意代码,阻止通过lobsterPath/cwd的任意执行,"GHSA-4mhr-g7xj-cg8j #5335"
+2026.4.5,高危,Sandbox远程文件系统桥接读取竞争条件,沙箱远程文件系统桥接读取存在路径解析竞争条件读取访问可竞争路径解析,"使远程文件系统桥接读取锚定父路径并原子打开文件;防止读取访问竞争路径解析",#58024
+2026.4.5,高危,Agents/Claude CLI配置根环境变量覆盖,OpenClaw启动的Claude CLI运行可被指向具有不同钩子、插件或认证上下文的备用配置/插件树,"清除继承的Claude Code配置根和插件根环境变量覆盖;包括CLAUDE_CONFIG_DIR和CLAUDE_CODE_PLUGIN_*",N/A
+2026.4.5,高危,Agents/Claude CLI提供者路由环境变量覆盖,Claude CLI后门会话可被静默重定向到代理、Bedrock、Vertex、Foundry或父管理的令牌上下文,"清除继承的Claude Code提供者路由和托管认证环境变量覆盖;将OpenClaw启动的Claude CLI运行标记为主机管理",N/A
+2026.4.5,高危,Agents/Claude CLI权限模式绕过,自定义cliBackends.claude-cli.args可能意外使用错误的权限模式仓库本地.claude设置在非交互会话中执行,"强制主机管理的Claude CLI运行使用--setting-sources user;防止仓库本地.claude设置在非交互会话中执行",N/A
+2026.4.5,高危,Gateway/device pairing配对令牌范围检查,非操作员设备会话可管理其他设备的令牌轮换/撤销和配对设备移除允许配对作用域内的跨设备令牌窃取,"要求非管理员配对设备会话仅管理自己的设备令牌轮换/撤销和配对设备移除;阻止配对作用域内的跨设备令牌窃取",#50627
+2026.4.5,高危,Mobile pairing/Android安全端点,安卓手动和扫描路由接受非回环明文网关连接私有LAN和链本地ws://端点未正确失败关闭,"安卓手动和扫描路由要求仅回环明文网关连接;私有LAN和链本地ws://端点现在失败关闭除非启用TLS","#60128 #60208 #60221"
+2026.4.5,高危,Mobile pairing/bootstrap引导令牌作用域,QR引导移交令牌未绑定到移动安全合约节点移交保持无作用域操作员移交携带混合作用域,"将QR引导移交令牌绑定到移动安全合约;节点移交保持无作用域;操作员移交丢弃混合的node.*、operator.admin和operator.pairing作用域",N/A
+2026.4.5,中危,Security工具白名单保留,限制性仅插件工具白名单未保留before_tool_call钩子崩溃时未失败关闭非交互式认证选择推断范围超出捆绑和已信任插件,"保留限制性仅插件工具白名单;/allowlist add和/allowlist remove需要所有者授权;before_tool_call钩子崩溃时失败关闭","#58476 #59836 #59822 #58771 #59120"
+2026.4.5,中危,Synology Chat HTTPS验证,低级HTTPS助手TLS验证默认关闭与安全账户默认不匹配,"默认开启低级HTTPS助手TLS验证;只有显式allowInsecureSsl: true可选择退出",N/A
+2026.4.5,中危,Telegram/local Bot API私有网络访问,本地Bot API配置缺乏私有网络访问控制绝对Bot API file_path值可在可信根之外读取,"为可信假IP设置添加channels.telegram.network.dangerouslyAllowPrivateNetwork;在读取绝对Bot API file_path值前要求channels.telegram.trustedLocalFileRoots","#59544 #60705"
+2026.4.5,中危,Tools/web_fetch受信任代理路径,缺少受信任代理安装的显式路径严格SSRF获取和代理路由混合,"为仅代理安装添加显式受信任代理路径;保持严格SSRF获取在固定直接路径上",#50650
+2026.4.5,中危,Exec/env Python包索引覆盖,Python包索引覆盖变量未从请求作用域主机执行环境清理中阻止包获取可通过调用者提供的索引重定向,"从请求作用域主机执行环境清理中阻止Python包索引覆盖变量;包获取不能通过调用者提供的索引重定向",Thanks @nexrin
+2026.4.5,中危,Sandbox沙箱文件系统桥接写入路径锚定,沙箱文件系统桥接的写入操作未正确锚定到规范父路径可能导致路径逃逸,"将writeFile提交锚定到规范父路径;防止路径逃逸",#5335
+2026.4.7,高危,Host exec/env环境变量注入,主机执行工具未过滤危险的环境变量攻击者可通过设置特定环境变量重定向代码执行、配置路径或凭证,"阻止Java、Rust、Cargo、Git、Kubernetes、云凭证、配置路径、Helm等危险环境变量覆盖;防止主机运行的工具被重定向到攻击者选择的代码、配置、凭证或仓库状态","#59119 #62002 #62291"
+2026.4.7,高危,MS Teams文件上传SSRF漏洞,Microsoft Teams的fileConsent/invoke端点在上传附件时未验证uploadInfo.uploadUrl攻击者可通过构造恶意URL访问内部网络资源,"验证上传URL必须使用HTTPS协议;检查主机名是否在Microsoft/SharePoint允许列表中;执行私有IP DNS检查阻止SSRF攻击",#23596
+2026.4.7,高危,QQ Bot图片尺寸探测SSRF,QQ Bot在探测图片尺寸时使用原始fetch()访问任意远程主机可被利用访问内部资源,"通过受保护的QQ/Tencent HTTPS获取附件;不再跟随任意远程主机;将图像尺寸探测路由到SSRF保护的媒体获取",#63495
+2026.4.7,高危,Network/fetch guard重定向信息泄露,跨源307/308重定向时未丢弃请求体和描述性头部攻击者控制的重定向可接收包含秘密的POST载荷,"默认丢弃跨源307/308重定向的请求体和body-describing头部;防止攻击者控制的重定向接收包含秘密的POST载荷",#62357
+2026.4.7,高危,Browser/SSRF主框架文档重定向,主框架document重定向跳转未被Playwright标记为isNavigationRequest()严格私有网络阻止未能阻止禁止的重定向枢轴,"将主框架document重定向跳转视为导航;严格私有网络阻止在浏览器到达内部目标前停止禁止的重定向枢轴",#62355
+2026.4.7,高危,Gateway/auth会话失效延迟,当共享令牌或密码轮换时现有的WebSocket会话仍然保持连接过期凭证继续有效,"令牌或密码更改时使现有WebSocket会话失效;防止过期的认证会话继续访问",#62350
+2026.4.7,高危,Commands/allowlist授权绕过,非所有者但具有命令授权的发送者可以持久重写允许列表策略状态,"/allowlist add和/allowlist remove需要所有者授权;在通道解析前验证所有者权限",#62383
+2026.4.7,高危,Gateway config.apply执行审批路径篡改,模型可通过gateway config.apply和config.patch修改执行审批路径配置绕过安全限制,"阻止模型面向的配置写入更改执行审批路径;包括safeBins、safeBinProfiles、safeBinTrustedDirs、strictInlineEval",#62001
+2026.4.7,高危,Feishu/docx uploads工作区限制绕过,当启用tools.fs.workspaceOnly时飞书文档上传仍可读取工作区外的本地文件,"将工作区约束的localRoots转发到媒体加载器;阻止工作区外文件读取",#62369
+2026.4.7,高危,Browser/node invoke浏览器配置文件持久化绕过,通过browser.proxy可在网关转发和节点主机代理路径上创建、重置和删除浏览器配置文件即使未配置配置文件允许列表,"阻止通过browser.proxy的持久浏览器配置文件变更;在网关转发node.invoke和节点主机代理路径上",#60489
+2026.4.7,高危,Gateway/node pairing节点命令升级,之前配对的节点重新连接时带有额外声明的命令会话立即升级到新命令集而无需批准,"当之前配对的节点重新连接时要求新的配对请求;保持实时会话绑定到较早批准的命令集直到升级被批准",#62658
+2026.4.7,高危,Media/base64解码字节限制绕过,"Teams、Signal、QQ Bot和图像工具的base64载荷在解码前未强制执行字节限制超大入站媒体和数据URL绕过预解码大小检查","在解码错过的base64载荷前强制执行字节限制;防止超大入站媒体和数据URL绕过预解码大小检查",#62007
+2026.4.7,高危,Runtime event trust运行时事件信任边界,后台notifyOnExit摘要、ACP父流中继和唤醒钩子载荷被标记为受信任的系统事件低信任运行时输出作为受信任的System:文本重新进入后续轮次,"将这些事件标记为不受信任的系统事件;防止低信任运行时输出作为受信任的System:文本重新进入后续轮次",#62003
+2026.4.7,高危,Plugins/ClawHub归档完整性验证,从ClawHub安装插件时未验证归档完整性归档完整性元数据缺失或格式错误时继续安装,"验证下载的插件归档与版本元数据SHA-256;归档完整性元数据缺失或格式错误时失败关闭",#60517
+2026.4.7,高危,Channels/setup目录信任绕过,工作区作用域覆盖绕过可信目录检查非信任的工作区通道插件在设置目录查找期间覆盖捆绑的可信设置目录条目,"在通道设置目录查找期间排除工作区阴影条目;将信任检查与自动启用对齐",GHSA-82qx-6vj7-p8m2
+2026.4.7,中危,Nodes/exec approvals POSIX shell包装器,节点主机system.run审批在异步转发期间丢失操作数绑定Windows cmd.exe包装器运行绕过审批门控,"保持节点主机审批绑定到准备的执行计划;可变脚本操作数仍获得审批时绑定和漂移重新验证","#62401 #62439"
+2026.4.7,中危,Git/env环境变量清理扩展,额外的Git仓库管道环境变量如GIT_DIR、GIT_WORK_TREE等未阻止主机运行的Git命令可通过继承或请求作用域环境重定向到攻击者选择的仓库状态,"阻止额外的Git仓库管道环境变量;包括GIT_DIR、GIT_WORK_TREE、GIT_COMMON_DIR、GIT_INDEX_FILE、GIT_OBJECT_DIRECTORY、GIT_ALTERNATE_OBJECT_DIRECTORIES、GIT_NAMESPACE",#62002
+2026.4.7,中危,Security/fetch-guard代理主机名拒绝,操作员配置的代理主机名被错误地拒绝目标作用域主机名白名单SSRF保护获取错误阻止有效代理路由,"停止在SSRF保护获取中针对目标作用域主机名白名单拒绝操作员配置的代理主机名;恢复Telegram和其他通道的基于代理的媒体下载",#62312
+2026.4.7,中危,Matrix/agents非所有者工具暴露,嵌入代理通道操作发现暴露所有者专用set-profile工具非所有者运行无法执行但仍然广播,"从嵌入代理通道操作发现中隐藏所有者专用set-profile;非所有者运行不再广播无法执行的工具",#62662
+2026.4.7,中危,Auto-reply/media生成媒体路径注入,管理的生成媒体MEDIA:路径被阻止任意主机本地媒体和文档路径仍可通过回复文本注入,"允许管理的生成媒体MEDIA:路径从正常回复文本;仍阻止任意主机本地媒体和文档路径",N/A
+2026.4.8,中危,Network/fetch guard代理DNS解析,受信任环境代理模式活动时目标DNS固定仍阻止代理解析出站主机仅代理沙箱无法使用可信代理解析,"受信任环境代理模式活动时跳过目标DNS固定;仅代理沙箱可让可信代理解析出站主机",#59007
+2026.4.8,中危,Slack/actions SecretRef令牌解析,downloadFile未将已解析的读取令牌传入SecretRef支持的机器人令牌在原始配置重读后失败,"将已解析的读取令牌传入downloadFile;SecretRef支持的机器人令牌在原始配置重读后继续工作",#62097
+2026.4.9,高危,Browser/security交互导航SSRF绕过,浏览器交互驱动的主帧导航后未重新运行阻止目标安全检查来自点击、评估、钩子触发点击和批处理动作流的延迟JS重定向绕过SSRF隔离,"在交互驱动的主帧导航后重新运行阻止目标安全检查;来自点击、评估、钩子触发点击和批处理动作流的延迟JS重定向不能绕过SSRF隔离",#63226
+2026.4.9,高危,Security/dotenv运行时控制环境变量,运行时控制环境变量和浏览器控制覆盖、跳过服务器环境变量从未信任的工作区.env文件阻止不安全URL样式的浏览器控制覆盖规范器延迟加载前未拒绝,"从未信任工作区.env文件阻止运行时控制环境变量;阻止浏览器控制覆盖和跳过服务器环境变量;延迟加载前拒绝不安全URL样式的浏览器控制覆盖规范器","#62660 #62663"
+2026.4.9,高危,Gateway/node exec events节点输出信任边界,远程节点exec.started、exec.finished和exec.denied摘要标记为受信任系统事件节点提供的命令/输出/原因文本未清理远程节点输出可作为受信任System:内容注入后续轮次,"将远程节点执行事件摘要标记为不受信任系统事件;入队前清理节点提供的命令/输出/原因文本",#62659
+2026.4.9,高危,Plugins/onboarding auth choices认证选择碰撞,非信任工作区插件在非交互式引导期间与捆绑提供者认证选择ID碰撞捆绑提供者设置将操作员秘密放入非信任工作区插件处理器,"防止非信任工作区插件在非交互式引导期间与捆绑提供者认证选择ID碰撞;捆绑提供者设置保持操作员秘密不进入非信任工作区插件处理器",#62368
+2026.4.9,中危,Security/dependency audit依赖漏洞,"basic-ftp存在CRLF命令注入漏洞Hono和@hono/node-server需要更新","强制basic-ftp到5.2.1修复CRLF命令注入;在生产解析路径中更新Hono和@hono/node-server",N/A
+2026.4.9,中危,Telegram/allowlist发送者验证,Telegram allowFrom发送者验证松散/whoami白名单报告与命令授权检查不同步,"加强Telegram allowFrom发送者验证;保持/whoami白名单报告与命令授权检查同步",N/A
+2026.4.10,高危,Browser/security全面导航防御强化,"浏览器和沙箱导航防御在多个领域松散:严格SSRF默认、主机名白名单、交互驱动重定向、子帧、CDP发现、现有会话、标签动作、noVNC、标记跨度清理和Docker CDP源范围执行","加强浏览器和沙箱导航防御跨严格SSRF默认;主机名白名单、交互驱动重定向、子帧、CDP发现;现有会话、标签动作、noVNC、标记跨度清理;Docker CDP源范围执行","#61404 #63332 #63882 #63885 #63889 #64367 #64370 #64371"
+2026.4.10,高危,Security/tools工具安全加固,"执行预检读取、主机环境拒绝列表、节点输出边界、出站主机媒体读取、配置文件变更授权、插件安装依赖扫描、ACPX工具钩子、Gmail监视器令牌修订和超大实时WebSocket帧处理存在安全弱点","加强执行预检读取;主机环境拒绝列表;节点输出边界;出站主机媒体读取;配置文件变更授权;插件安装依赖扫描;ACPX工具钩子;Gmail监视器令牌修订;超大实时WebSocket帧处理","#62333 #62661 #62662 #63277 #63551 #63553 #63886 #63890 #63891 #64459"
+2026.4.10,高危,Security/QQBot媒体存储边界,QQ Bot出站本地文件路径未强制执行媒体存储边界图像尺寸探测使用原始fetch()而非SSRF保护的媒体获取,"为所有出站本地文件路径强制执行媒体存储边界;将图像尺寸探测路由到SSRF保护的媒体获取而非原始fetch()","#63271 #63495"
+2026.4.10,高危,Security/dependencies恶意包阻止,axios存在安全漏洞插件安装依赖扫描未阻止已知恶意包,"将axios固定到1.15.0;添加插件安装依赖拒绝列表;在安装前阻止已知恶意包",#63891
+2026.4.10,高危,Browser/security三阶段交互导航保护,pressKey和type(submit)的延迟JS重定向未应用SSRF策略后期检查可绕过SSRF策略,"将三阶段交互导航保护应用到pressKey和type(submit);来自按键的延迟JS重定向不能绕过SSRF策略",#63889
+2026.4.10,高危,Browser/security现有会话Chrome MCP交互路由,现有会话Chrome MCP交互路由未使用SSRF后期检查保护来自点击、类型、按键和评估的延迟导航可绕过配置的策略,"用SSRF后期检查保护现有会话Chrome MCP交互路由;来自点击、类型、按键和评估的延迟导航不能绕过配置的策略",#64370
+2026.4.10,高危,Browser/security默认严格SSRF模式,浏览器SSRF策略未默认为严格模式未配置安装不阻止私有网络导航外部内容标记跨度映射未完全清理ZWS注入边界欺骗,"默认浏览器SSRF策略为严格模式;未配置安装阻止私有网络导航;对齐外部内容标记跨度映射;ZWS注入边界欺骗完全清理",#63885
+2026.4.10,高危,Browser/security子帧文档导航SSRF,SSRF导航策略未应用到子帧文档导航iframe目标的私有网络跳转未阻止,"将SSRF导航策略应用到子帧文档导航;iframe目标的私有网络跳转被阻止",#64371
+2026.4.10,高危,Browser/security主机名导航严格策略,严格策略主机名导航未拒绝非白名单例外或IP字面量的主机名CDP HTTP发现未路由到固定SSRF获取路径,"严格策略主机名导航拒绝非白名单例外或IP字面量的主机名;CDP HTTP发现路由到固定SSRF获取路径",#64367
+2026.4.10,高危,Hooks/security钩子系统事件信任,代理钩子系统事件标记为受信任钩子显示名称在cron元数据重用前未清理,"将代理钩子系统事件标记为不受信任;在cron元数据重用前清理钩子显示名称",#64372
+2026.4.10,高危,Media/security发送者作用域工具策略,出站主机媒体读取未遵守发送者作用域toolsBySender策略被拒绝的发送者可通过附件水化触发主机文件披露,"出站主机媒体读取遵守发送者作用域toolsBySender策略;被拒绝的发送者不能通过附件水化触发主机文件披露",#64459
+2026.4.10,高危,Agents/inbound metadata NUL字节注入,序列化入站上下文块中的NUL字节未在到达后端生成参数前剥离格式错误的消息元数据可导致代理生成崩溃,"在序列化入站上下文块到达后端生成参数前剥离NUL字节;格式错误的消息元数据不能导致代理生成崩溃",#65389
+2026.4.10,中危,CLI/devices配对批准竞争条件,隐式openclaw devices approve选择预览最新请求而无需批准确切的请求ID设备配对期间存在最新请求竞争,"使隐式openclaw devices approve选择仅预览;要求批准确切的请求ID;防止设备配对期间的最新请求竞争",#64160
+2026.4.11,高危,Windows/onboarding命令执行绕过,Windows引导通过cmd /c start打开提供者OAuth和登录URL引用的提供者URL可分解为主机命令执行,"用explorer.exe打开提供者OAuth和登录URL;不通过cmd /c start路由;引用的提供者URL不能分解为主机命令执行",#64161
+2026.4.11,高危,Security/exec approvals令牌修订,执行审批提示命令文本中的承载令牌、API密钥和类似秘密在发布回聊天频道前未修订无论日志修订设置如何,"在执行审批提示命令文本发布回聊天频道前修订承载令牌、API密钥和类似秘密;无论日志修订设置如何","#61077 #64790"
+2026.4.11,中危,QA channel/security非HTTP(S)附件URL,QA通道在媒体获取前未拒绝非HTTP(S)入站附件URL可疑或错误配置的载荷在调试期间不可见,"在媒体获取前拒绝非HTTP(S)入站附件URL;记录拒绝的方案以便调试期间可见可疑或错误配置的载荷",#70708
+2026.4.11,中危,Teams/security Bot Framework受众令牌重放,共享的Bot Framework受众令牌未要求通过验证的appid或azp命名配置的Teams应用全局受众上的跨机器人令牌重放未被阻止,"要求共享的Bot Framework受众令牌通过验证的appid或azp命名配置的Teams应用;阻止全局受众上的跨机器人令牌重放",#70724
+2026.4.11,中危,Anthropic/CLI security权限模式派生,Claude CLI bypassPermissions未从OpenClaw的现有YOLO执行策略派生显式原始Claude --permission-mode覆盖未保留格式错误的权限模式参数静默回退到绕过,"从OpenClaw的现有YOLO执行策略派生Claude CLI bypassPermissions;保留显式原始Claude --permission-mode覆盖;剥离格式错误的权限模式参数而不是静默回退到绕过",#70723
+2026.4.11,中危,Android/security明文网关连接,Android手动和扫描路由接受非回环明文网关连接私有LAN和链本地ws://端点在启用TLS前未失败关闭,"Android手动和扫描路由要求仅回环明文网关连接;私有LAN和链本地ws://端点现在失败关闭除非启用TLS",#70722
+2026.4.11,中危,Pairing/security明文移动配对端点,明文移动配对接受私有IP或回环以外的主机.local或无点主机名被视为安全明文端点,"明文移动配对要求私有IP或回环主机;.local或无点主机名不再被视为安全明文端点",#70721
+2026.4.11,中危,Plugins/security设置API查询回退,设置API查询回退到启动目录工作区本地extensions/<plugin>/setup-api.*文件可在提供者设置解析期间执行,"停止设置API查询回退到启动目录;工作区本地extensions/<plugin>/setup-api.*文件不能在提供者设置解析期间执行",#70718
+2026.4.11,中危,Approvals/security聊天执行审批自动启用,仅因为审批者从配置或所有者白名单解析审批客户端就自动启用未要求显式聊天执行审批启用,"要求显式聊天执行审批启用;不自动启用审批客户端仅因为审批者从配置或所有者白名单解析",#70715
+2026.4.11,中危,Discord/security本地斜杠命令通道策略,本地斜杠命令通道策略绕过配置的所有者或成员限制在不存在更严格的访问规则时错误地回退到通道策略,"保持本地斜杠命令通道策略不绕过配置的所有者或成员限制;在不存在更严格的访问规则时保留通道策略回退",#70711
+2026.4.11,中危,Android/security ASK_OPENCLAW意图自动发送,ASK_OPENCLAW意图自动发送注入的提示外部应用动作直接派发而不是预填草稿,"停止ASK_OPENCLAW意图自动发送注入的提示;外部应用动作仅预填草稿而不是派发它",#70714
+2026.4.11,中危,Agents/image generation工具警告注入,工具警告中忽略的覆盖值未转义解析的MEDIA:指令可通过不支持的模型选项注入,"在工具警告中转义忽略的覆盖值;解析的MEDIA:指令不能通过不支持的模型选项注入",#70710
+2026.4.11,中危,QQBot/security Bot审批未授权访问,/bot-approve未要求框架认证未授权的QQ发送者可通过未认证的预派发斜杠命令路径更改执行审批设置,"要求框架认证用于/bot-approve;未授权的QQ发送者不能通过未认证的预派发斜杠命令路径更改执行审批设置",#70706
+2026.4.11,中危,WhatsApp/security结构化对象注入,WhatsApp联系人/vCard/位置结构化对象自由文本进入内联消息体名称、电话字段和位置标签/注释中存在隐藏提示注入载荷,"将联系人/vCard/位置结构化对象自由文本保留在内联消息体之外;通过围栏的不受信任元数据JSON渲染",N/A
+2026.4.11,中危,Group-chat/security组名和参与者标签注入,通道来源的组名和参与者标签进入内联组系统提示未作为围栏的不受信任元数据JSON渲染,"将通道来源的组名和参与者标签保留在内联组系统提示之外;通过围栏的不受信任元数据JSON渲染",N/A
+2026.4.11,中危,Gateway/security配置写入失败关闭,代理驱动的gateway config.apply/config.patch运行时编辑失败开启依赖手工维护的拒绝列表可能错过新的敏感配置键,"代理驱动的gateway config.apply/config.patch运行时编辑失败关闭;白名单窄组代理可调的提示、模型和提及门控路径",#70726
+2026.4.11,中危,Webhooks/security SecretRef秘密重新解析,SecretRef支持的webhook路由秘密未在每个请求上重新解析openclaw secrets reload不能立即撤销之前的秘密,"在每个请求上重新解析SecretRef支持的webhook路由秘密;openclaw secrets reload立即撤销之前的秘密",#70727
+2026.4.11,中危,Security/dotenv端点设置覆盖,工作区.env覆盖未阻止Matrix、Mattermost、IRC和Synology端点设置克隆的工作区可通过本地端点配置重定向捆绑连接器流量,"阻止工作区.env覆盖用于Matrix、Mattermost、IRC和Synology端点设置;克隆的工作区不能通过本地端点配置重定向捆绑连接器流量",#70240
+2026.4.11,中危,Telegram/model picker未授权访问,组模型选择器回调未要求相同的/models授权未授权参与者可浏览或更改会话模型,"组模型选择器回调要求相同的/models授权;未授权参与者不能浏览或更改会话模型",#70235
+2026.4.11,中危,Gateway/Control UI未认证配置读取,启用gateway.auth时/__openclaw/control-ui-config.json未要求认证Control UI读取访问未认证调用者可读取引导元数据,"启用gateway.auth时要求认证Control UI读取访问用于/__openclaw/control-ui-config.json;未认证调用者不能读取引导元数据",#70247
+2026.4.11,中危,Security/external content特殊令牌清理,"常见的自托管LLM聊天模板特殊令牌字面量（包括Qwen/ChatML、Llama、Gemma、Mistral、Phi和GPT-OSS标记器）未从包装的外部内容和元数据中剥离存在令牌化器层角色边界欺骗","从包装的外部内容和元数据中剥离常见自托管LLM聊天模板特殊令牌字面量;包括Qwen/ChatML、Llama、Gemma、Mistral、Phi和GPT-OSS标记器",N/A
+2026.4.11,中危,Auth/commands所有者身份要求,所有者强制命令未要求所有者身份通配符通道allowFrom或空所有者候选列表被视为充分,"仅所有者命令要求所有者身份（所有者候选匹配或内部operator.admin）;不将通配符通道allowFrom或空所有者候选列表视为充分",#69774
+2026.4.11,中危,Synology Chat SSRF via webhook,出站webhook file_url值未针对共享SSRF策略验证NAS可作为困惑代理获取内部地址,"在转发到NAS前验证出站webhook file_url值针对共享SSRF策略;拒绝格式错误的URL、非http(s)方案和私有/阻塞网络目标",#69784
+2026.4.11,中危,Gateway/Control UI avatar未认证访问,Control UI avatar路由在配置认证时未要求网关认证与同级助手媒体路由不匹配,"配置认证时要求网关认证用于Control UI avatar路由;与同级助手媒体路由匹配",#69775
+2026.4.11,中危,Google Chat/auth gaxios SSRF保护,Google认证gaxios垫片未使用作用域SSRF保护的传输服务账户认证端点未针对可信Google URL验证,"用作用域SSRF保护的传输替换Google认证gaxios垫片;针对可信Google URL验证服务账户认证端点",#69812
+2026.4.11,中危,Gateway/MCP loopback所有者工具可见性,所有者专用工具可见性从调用者控制的所有者头派生而非区分认证的所有者与非所有者回环承载者非所有者MCP子进程可通过欺骗请求元数据恢复所有者访问,"从区分认证的所有者与非所有者回环承载者派生仅所有者工具可见性;不从调用者控制的所有者头派生",#69796
