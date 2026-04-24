@@ -1,0 +1,200 @@
+---
+import type { CollectionEntry } from "astro:content";
+import IconDownload from "@/assets/icons/IconDownload.svg";
+
+type Props = {
+  post: CollectionEntry<"blog">;
+  class?: string;
+};
+
+const { post, class: className = "" } = Astro.props;
+const { title } = post.data;
+---
+
+<button
+  id="download-btn"
+  class:list={["flex justify-baseline gap-1.5 opacity-80 hover:text-accent", className]}
+  aria-label="Download as Markdown"
+>
+  <IconDownload class="inline-block" />
+  <span>Download</span>
+</button>
+
+<script define:vars={{ title }}>
+  document.getElementById("download-btn")?.addEventListener("click", async () => {
+    try {
+      // Get the article content
+      const article = document.getElementById("article");
+      if (!article) return;
+
+      // Create markdown content
+      let markdown = `# ${title}\n\n`;
+
+      // Get the current page URL for reference
+      markdown += `> Source: ${window.location.href}\n\n`;
+
+      // Convert article HTML to Markdown
+      const content = article.cloneNode(true);
+
+      // Remove any script tags
+      content.querySelectorAll('script').forEach(s => s.remove());
+
+      // Process the content
+      markdown += htmlToMarkdown(content);
+
+      // Create and download the file
+      const blob = new Blob([markdown], { type: "text/markdown;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${title.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '-')}.md`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Download failed:", error);
+    }
+  });
+
+  function htmlToMarkdown(element) {
+    let markdown = "";
+
+    function processNode(node) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        return node.textContent;
+      }
+
+      if (node.nodeType !== Node.ELEMENT_NODE) {
+        return "";
+      }
+
+      const tag = node.tagName.toLowerCase();
+      let result = "";
+
+      switch (tag) {
+        case "h1":
+          result = `# ${getTextContent(node)}\n\n`;
+          break;
+        case "h2":
+          result = `## ${getTextContent(node)}\n\n`;
+          break;
+        case "h3":
+          result = `### ${getTextContent(node)}\n\n`;
+          break;
+        case "h4":
+          result = `#### ${getTextContent(node)}\n\n`;
+          break;
+        case "h5":
+          result = `##### ${getTextContent(node)}\n\n`;
+          break;
+        case "h6":
+          result = `###### ${getTextContent(node)}\n\n`;
+          break;
+        case "p":
+          result = `${processChildren(node)}\n\n`;
+          break;
+        case "strong":
+        case "b":
+          result = `**${processChildren(node)}**`;
+          break;
+        case "em":
+        case "i":
+          result = `*${processChildren(node)}*`;
+          break;
+        case "code":
+          if (node.parentElement && node.parentElement.tagName.toLowerCase() === "pre") {
+            result = processChildren(node);
+          } else {
+            result = `\`${processChildren(node)}\``;
+          }
+          break;
+        case "pre":
+          const code = node.querySelector("code");
+          const lang = code?.className?.match(/language-(\w+)/)?.[1] || "";
+          result = `\`\`\`${lang}\n${getTextContent(node)}\n\`\`\`\n\n`;
+          break;
+        case "a":
+          const href = node.getAttribute("href") || "";
+          result = `[${processChildren(node)}](${href})`;
+          break;
+        case "img":
+          const src = node.getAttribute("src") || "";
+          const alt = node.getAttribute("alt") || "";
+          result = `![${alt}](${src})`;
+          break;
+        case "ul":
+          const ulItems = Array.from(node.children)
+            .filter(child => child.tagName.toLowerCase() === "li")
+            .map(li => `- ${processChildren(li)}`)
+            .join("\n");
+          result = `${ulItems}\n\n`;
+          break;
+        case "ol":
+          const olItems = Array.from(node.children)
+            .filter(child => child.tagName.toLowerCase() === "li")
+            .map((li, index) => `${index + 1}. ${processChildren(li)}`)
+            .join("\n");
+          result = `${olItems}\n\n`;
+          break;
+        case "blockquote":
+          const lines = getTextContent(node).split("\n");
+          result = lines.map(line => `> ${line}`).join("\n") + "\n\n";
+          break;
+        case "hr":
+          result = "\n---\n\n";
+          break;
+        case "br":
+          result = "\n";
+          break;
+        case "table":
+          result = processTable(node);
+          break;
+        default:
+          result = processChildren(node);
+      }
+
+      return result;
+    }
+
+    function processChildren(node) {
+      let text = "";
+      for (const child of node.childNodes) {
+        text += processNode(child);
+      }
+      return text;
+    }
+
+    function getTextContent(node) {
+      return node.textContent || "";
+    }
+
+    function processTable(table) {
+      const rows = Array.from(table.querySelectorAll("tr"));
+      if (rows.length === 0) return "";
+
+      let result = "";
+      const headerRow = rows[0];
+      const headers = Array.from(headerRow.querySelectorAll("th, td"));
+      const colCount = headers.length;
+
+      // Header
+      result += "| " + headers.map(h => getTextContent(h).trim()).join(" | ") + " |\n";
+      result += "| " + Array(colCount).fill("---").join(" | ") + " |\n";
+
+      // Body
+      for (let i = 1; i < rows.length; i++) {
+        const cells = Array.from(rows[i].querySelectorAll("td, th"));
+        result += "| " + cells.map(c => getTextContent(c).trim()).join(" | ") + " |\n";
+      }
+
+      return result + "\n";
+    }
+
+    for (const child of element.childNodes) {
+      markdown += processNode(child);
+    }
+
+    return markdown;
+  }
+</script>

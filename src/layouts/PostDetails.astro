@@ -9,6 +9,7 @@ import EditPost from "@/components/EditPost.astro";
 import ShareLinks from "@/components/ShareLinks.astro";
 import BackButton from "@/components/BackButton.astro";
 import BackToTopButton from "@/components/BackToTopButton.astro";
+import DownloadButton from "@/components/DownloadButton.astro";
 import { getPath } from "@/utils/getPath";
 import { slugifyStr } from "@/utils/slugify";
 import IconChevronLeft from "@/assets/icons/IconChevronLeft.svg";
@@ -106,6 +107,8 @@ const nextPost =
         ]}>|</span
       >
       <EditPost {hideEditPost} {post} class="max-sm:hidden" />
+      <span aria-hidden="true" class="max-sm:hidden">|</span>
+      <DownloadButton {post} class="max-sm:hidden" />
     </div>
     <article
       id="article"
@@ -116,7 +119,11 @@ const nextPost =
 
     <hr class="my-8 border-dashed" />
 
-    <EditPost class="sm:hidden" {hideEditPost} {post} />
+    <div class="sm:hidden flex items-center gap-2">
+      <EditPost {hideEditPost} {post} />
+      <span aria-hidden="true">|</span>
+      <DownloadButton {post} />
+    </div>
 
     <ul class="mt-4 mb-8 flex flex-wrap gap-4 sm:my-8">
       {tags.map(tag => <Tag tag={slugifyStr(tag)} tagName={tag} size="sm" />)}
