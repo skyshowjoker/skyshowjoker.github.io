@@ -1,3 +1,10 @@
+---
+title: "OpenClaw 安全分析报告：v3.24 到 v4.11"
+description: "分析 OpenClaw 从版本 3.24 到 4.11 期间的重要安全变更和修复，包括 SSRF 防护、环境变量注入防护等安全改进"
+pubDatetime: 2024-04-15T02:00:00Z
+tags: ["安全分析", "OpenClaw"]
+---
+
 # OpenClaw 安全分析报告：v3.24 到 v4.11
 
 ## 概述
